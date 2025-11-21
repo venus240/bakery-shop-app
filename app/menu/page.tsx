@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/ProductCard";
 import CustomCakeModal from "@/components/CustomCakeModal";
 import { useSupabaseAuth } from "@/components/useSupabaseAuth";
 import type { Product, CustomCakePayload } from "@/types";
+import { useAlert } from "@/components/AlertProvider";
 
 // ✅ 1. กำหนดรายการหมวดหมู่ (id ต้องตรงกับใน Database)
 const CATEGORIES = [
@@ -19,6 +20,7 @@ const CATEGORIES = [
 ];
 
 export default function MenuPage() {
+  const { showAlert } = useAlert();
   const [products, setProducts] = useState<Product[]>([]);
   const [openCustom, setOpenCustom] = useState(false);
   const [selected, setSelected] = useState<Product | null>(null);
@@ -62,7 +64,12 @@ export default function MenuPage() {
   };
 
   const handleAddCustom = async (payload: CustomCakePayload) => {
-    if (!user) return alert("กรุณาเข้าสู่ระบบ");
+    if (!user)
+      return showAlert(
+        "เข้าสู่ระบบไม่สำเร็จ",
+        "กรุณาเข้าสู่ระบบก่อนเพิ่มสินค้าลงตะกร้า",
+        "error"
+      );
     setIsAdding(true);
     const { error } = await supabase.from("cart_items").insert([
       {
@@ -77,9 +84,18 @@ export default function MenuPage() {
     setIsAdding(false);
     if (error) {
       console.error(error);
-      alert("เกิดข้อผิดพลาดในการเพิ่มสินค้า");
+      showAlert(
+        "เพิ่มสินค้าไม่สำเร็จ",
+        "เกิดข้อผิดพลาดในการเพิ่มสินค้าลงตะกร้า",
+        "error"
+      ); 
     } else {
       setOpenCustom(false);
+      showAlert(
+        "เพิ่มสำเร็จ! 🛒",
+        "เพิ่มสินค้าลงในตะกร้าเรียบร้อยแล้ว",
+        "success"
+      ); 
     }
   };
 
@@ -136,7 +152,7 @@ export default function MenuPage() {
         // ถ้าไม่มีสินค้าในหมวดนี้
         <div className="text-center py-20">
           <p className="text-xl text-stone-400">ไม่มีสินค้าในหมวดหมู่นี้</p>
-          <button 
+          <button
             onClick={() => setSelectedCategory("all")}
             className="mt-4 text-stone-600 underline hover:text-stone-800"
           >

@@ -12,7 +12,7 @@
   }
 }
 
-/* ✅ เพิ่ม Animation ตะกร้าเด้ง */
+/*ตะกร้าเด้ง*/
 @keyframes pop {
   0% { transform: scale(1); }
   50% { transform: scale(1.2); }

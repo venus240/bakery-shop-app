@@ -1,15 +1,25 @@
 "use client";
 
 import { supabase } from "@/lib/supabaseClient";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSupabaseAuth } from "@/components/useSupabaseAuth";
+import { useAlert } from "@/components/AlertProvider";
 
 export default function LoginPage() {
+  const { showAlert } = useAlert();
+  const { user } = useSupabaseAuth(); //ดึง user จาก Auth Hook มาเช็ค
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.replace("/"); // ใช้ replace เพื่อไม่ให้กด Back กลับมาได้
+    }
+  }, [user, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,11 +31,13 @@ export default function LoginPage() {
     });
 
     if (error) {
-      alert(error.message);
+      showAlert("เข้าสู่ระบบไม่สำเร็จ", error.message, "error");
     } else {
-      // alert("Login success!"); // ไม่จำเป็นต้อง alert แล้ว redirect เลยจะลื่นไหลกว่า
-      router.push("/");
-      router.refresh();
+      // ✅ Login สำเร็จ
+      showAlert("ยินดีต้อนรับ! ", "เข้าสู่ระบบเรียบร้อยแล้ว", "success", () => {
+        router.push("/");
+        router.refresh();
+      });
     }
     setLoading(false);
   };

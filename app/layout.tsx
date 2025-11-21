@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Mali } from "next/font/google";
 import "./globals.css";
+import { AlertProvider } from "@/components/AlertProvider";
 
 // ✅ 1. Import Navbar
 import { Navbar } from "@/components/Navbar";
@@ -24,9 +25,10 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={mali.variable}>
-        <Navbar />
-
-        <main>{children}</main>
+        <AlertProvider>
+          <Navbar />
+          <main>{children}</main>
+        </AlertProvider>
       </body>
     </html>
   );

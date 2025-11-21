@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useSupabaseAuth } from "./useSupabaseAuth";
 import type { Product } from "@/types";
-import Image from "next/image"; // ✅ ใช้ Image ของ Next.js เพื่อประสิทธิภาพ
+import Image from "next/image";
+import { useAlert } from "./AlertProvider";
 
 interface ProductCardProps {
   product: Product;
@@ -17,14 +18,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   // --- (Logic: เหมือนเดิมทุกประการ) ---
   const { user } = useSupabaseAuth();
+  const { showAlert } = useAlert();
   const [isAdding, setIsAdding] = useState(false);
 
   const addToCart = async (e: React.MouseEvent) => {
     console.log("User:", user);
     e.stopPropagation();
-    if (!user) {
-      return alert("กรุณาเข้าสู่ระบบก่อนเพิ่มสินค้าลงตะกร้า");
-    }
+    if (!user)
+      return showAlert(
+        "เข้าสู่ระบบไม่สำเร็จ",
+        "กรุณาเข้าสู่ระบบก่อนเพิ่มสินค้า",
+        "error"
+      );
     if (isAdding) {
       return;
     }
@@ -63,9 +68,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         ]);
       }
       // alert("เพิ่มลงตะกร้าแล้ว"); // (Optional: ปิด alert เพื่อความลื่นไหล)
+      showAlert(
+        "เพิ่มสำเร็จ! 🛒",
+        `เพิ่ม ${product.name} ลงในตะกร้าแล้ว`,
+        "success"
+      ); 
     } catch (err) {
       console.error(err);
-      alert("เกิดข้อผิดพลาดขณะเพิ่มสินค้าลงตะกร้า");
+      showAlert("เกิดข้อผิดพลาด", "ไม่สามารถเพิ่มสินค้าลงตะกร้าได้", "error"); // ✅ แทนที่ alert
     }
     setIsAdding(false);
   };

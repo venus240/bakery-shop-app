@@ -114,7 +114,7 @@ export default function CartPage() {
   }
   if (!user) {
     return (
-      <div className="max-w-3xl mx-auto p-8 text-center bg-white shadow-md rounded-lg">
+      <div className="max-w-3xl mx-auto my-4 p-8 text-center bg-white shadow-md rounded-lg">
         <h2 className="text-xl text-stone-700 mb-4">
           กรุณาเข้าสู่ระบบเพื่อดูตะกร้าสินค้า
         </h2>
@@ -215,7 +215,7 @@ export default function CartPage() {
               <span>ค่าจัดส่ง</span>
               <span>(คำนวณภายหลัง)</span>
             </div>
-            <hr className="my-3 border-stone-200" /> {/* ✅ ปรับสี hr */}
+            <hr className="my-3 border-stone-200" /> 
             <div className="flex justify-between font-bold text-xl text-stone-800 mb-4">
               <span>รวมทั้งหมด</span>
               <span>฿{totalPrice.toFixed(2)}</span>

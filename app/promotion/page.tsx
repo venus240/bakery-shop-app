@@ -25,7 +25,7 @@ const PROMOTIONS = [
     description: "บริการจัดส่งฟรีภายในระยะทาง 10 กม. เมื่อยอดสั่งซื้อครบ 500 บาท",
     code: "FREEDEL",
     image: "https://images.unsplash.com/photo-1626202267363-25a970b76627?auto=format&fit=crop&q=80&w=800",
-    validUntil: "ไม่มีหมดอายุ",
+    validUntil: "31 ธ.ค. 2025",
   },
 ];
 
@@ -37,7 +37,7 @@ export default function PromotionPage() {
         
         <div className="text-center mb-12">
           {/* ✅ ใช้สี text-bakery-dark */}
-          <h1 className="text-4xl font-bold text-bakery-dark mb-3 tracking-wide">โปรโมชั่นเดือนนี้ </h1>
+          <h1 className="text-4xl font-bold text-bakery-dark mb-3 tracking-wide">โปรโมชั่น </h1>
           {/* ✅ ใช้สี text-bakery-brown */}
           <p className="text-bakery-brown text-lg">ดีลพิเศษที่เราตั้งใจมอบให้คุณ</p>
         </div>

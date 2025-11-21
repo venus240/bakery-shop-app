@@ -6,6 +6,7 @@ import type { User } from "@supabase/supabase-js";
 
 export function useSupabaseAuth() {
   const [user, setUser] = useState<User | null>(null);
+  
 
   useEffect(() => {
     let mounted = true;
@@ -29,3 +30,4 @@ export function useSupabaseAuth() {
 
   return { user };
 }
+
