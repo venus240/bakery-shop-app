@@ -5,10 +5,12 @@ import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSupabaseAuth } from "@/components/useSupabaseAuth";
+import { useAlert } from "@/components/AlertProvider";
 
 export default function ProfilePage() {
   const { user } = useSupabaseAuth();
   const router = useRouter();
+  const { showAlert } = useAlert();
   
   // ✅ ใช้ useRef เพื่อควบคุม input file
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,6 +32,11 @@ export default function ProfilePage() {
   // ✅ ฟังก์ชันคลิกที่รูป -> ไปคลิก input file
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.replace("/login");
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,13 +81,20 @@ export default function ProfilePage() {
 
       if (updateError) throw updateError;
 
-      alert("บันทึกข้อมูลสำเร็จ! 🎉");
-      router.refresh();
-      window.location.reload();
-
+      showAlert(
+        "บันทึกข้อมูลสำเร็จ! 🎉",
+        "อัปเดตข้อมูลโปรไฟล์เรียบร้อยแล้ว",
+        {
+          type: "success",
+          onOk: () => {
+            router.refresh();
+            window.location.reload();
+          },
+        }
+      );
     } catch (error) {
       console.error(error);
-      alert("เกิดข้อผิดพลาดในการบันทึก");
+      showAlert("เกิดข้อผิดพลาด", "ไม่สามารถบันทึกข้อมูลโปรไฟล์ได้", "error");
     } finally {
       setLoading(false);
     }
@@ -158,20 +172,30 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className="pt-4 flex gap-3">
+          <div className="pt-4 space-y-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="sm:flex-1 py-3 bg-white border-2 border-stone-200 text-stone-600 font-bold rounded-xl hover:bg-stone-50 transition-all"
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="sm:flex-[2] py-3 bg-stone-800 text-white font-bold rounded-xl shadow-md hover:bg-stone-900 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+              >
+                {loading ? "กำลังบันทึก..." : "💾 บันทึกการแก้ไข"}
+              </button>
+            </div>
+
             <button
               type="button"
-              onClick={() => router.back()}
-              className="flex-1 py-3 bg-white border-2 border-stone-200 text-stone-600 font-bold rounded-xl hover:bg-stone-50 transition-all"
+              onClick={handleSignOut}
+              className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl border border-red-100 hover:bg-red-100 transition-all"
             >
-              ยกเลิก
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-[2] py-3 bg-stone-800 text-white font-bold rounded-xl shadow-md hover:bg-stone-900 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
-            >
-              {loading ? "กำลังบันทึก..." : "💾 บันทึกการแก้ไข"}
+              ออกจากระบบ
             </button>
           </div>
 

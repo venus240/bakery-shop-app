@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { useSupabaseAuth } from "@/components/useSupabaseAuth";
-import AlertModal from "@/components/AlertModal"; 
+import { useAlert } from "@/components/AlertProvider";
 
 // Define Types
 interface CartItem {
@@ -56,22 +56,7 @@ export default function CheckoutPage() {
     type: "success" | "error";
   } | null>(null);
 
-  const [modal, setModal] = useState({
-    isOpen: false,
-    title: "",
-    message: "",
-    type: "info" as "success" | "error" | "info",
-    onOk: () => {}, // ฟังก์ชันที่จะทำหลังจากกด OK
-  });
-
-  const showAlert = (title: string, message: string, type: "success" | "error" | "info" = "info", onOk = () => {}) => {
-    setModal({ isOpen: true, title, message, type, onOk });
-  };
-
-  const closeAlert = () => {
-    setModal((prev) => ({ ...prev, isOpen: false }));
-    modal.onOk(); // เรียกฟังก์ชันที่ฝากไว้ (เช่น redirect)
-  };
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (!user) return;
@@ -256,7 +241,7 @@ export default function CheckoutPage() {
       );
     } catch (error) {
       console.error(error);
-      alert("เกิดข้อผิดพลาดในการสั่งซื้อ");
+      showAlert("เกิดข้อผิดพลาด", "ไม่สามารถบันทึกคำสั่งซื้อได้", "error");
     } finally {
       setSubmitting(false);
     }
@@ -282,14 +267,6 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[#FBF9F6] py-10 px-4">
-      <AlertModal 
-        isOpen={modal.isOpen} 
-        title={modal.title} 
-        message={modal.message} 
-        type={modal.type}
-        onClose={closeAlert} 
-      />
-
       <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* --- ฝั่งซ้าย --- */}
         <div className="space-y-6">

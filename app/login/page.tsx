@@ -49,9 +49,13 @@ export default function LoginPage() {
     setLoading(false);
 
     if (error) {
-      alert(error.message);
+      showAlert("สมัครสมาชิกไม่สำเร็จ", error.message, "error");
     } else {
-      alert("ลงทะเบียนสำเร็จ! กรุณาตรวจสอบอีเมลเพื่อยืนยันตัวตน");
+      showAlert(
+        "สมัครสมาชิกสำเร็จ",
+        "กรุณาตรวจสอบอีเมลเพื่อยืนยันตัวตน",
+        "success"
+      );
     }
   };
 

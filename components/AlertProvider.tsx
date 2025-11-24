@@ -3,12 +3,21 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import AlertModal from "@/components/AlertModal";
 
-// กำหนดหน้าตาของคำสั่ง showAlert
+type AlertType = "success" | "error" | "info";
+
+interface AlertOptions {
+  type?: AlertType;
+  okText?: string;
+  cancelText?: string;
+  onOk?: () => void;
+  onCancel?: () => void;
+}
+
 interface AlertContextType {
   showAlert: (
     title: string,
     message: string,
-    type?: "success" | "error" | "info",
+    typeOrOptions?: AlertType | AlertOptions,
     onOk?: () => void
   ) => void;
 }
@@ -19,43 +28,73 @@ export function AlertProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [type, setType] = useState<"success" | "error" | "info">("info");
+  const [type, setType] = useState<AlertType>("info");
+  const [okText, setOkText] = useState("ตกลง");
+  const [showCancel, setShowCancel] = useState(false);
+  const [cancelText, setCancelText] = useState("ยกเลิก");
   const [onOk, setOnOk] = useState<() => void>(() => () => {});
+  const [onCancel, setOnCancel] = useState<() => void>(() => () => {});
 
   const showAlert = (
-    title: string,
-    message: string,
-    type: "success" | "error" | "info" = "info",
-    onOk: () => void = () => {}
+    titleInput: string,
+    messageInput: string,
+    typeOrOptions: AlertType | AlertOptions = "info",
+    onOkFallback: () => void = () => {}
   ) => {
-    setTitle(title);
-    setMessage(message);
-    setType(type);
-    setOnOk(() => onOk); // เก็บฟังก์ชันไว้เรียกตอนกดตกลง
+    const options: AlertOptions =
+      typeof typeOrOptions === "string"
+        ? { type: typeOrOptions, onOk: onOkFallback }
+        : typeOrOptions;
+
+    setTitle(titleInput);
+    setMessage(messageInput);
+    setType(options.type ?? "info");
+    setOkText(options.okText ?? "ตกลง");
+
+    if (options.cancelText) {
+      setShowCancel(true);
+      setCancelText(options.cancelText);
+      setOnCancel(() => options.onCancel ?? (() => {}));
+    } else {
+      setShowCancel(false);
+      setCancelText("ยกเลิก");
+      setOnCancel(() => () => {});
+    }
+
+    setOnOk(() => options.onOk ?? onOkFallback ?? (() => {}));
     setIsOpen(true);
   };
 
-  const handleClose = () => {
+  const handleOk = () => {
     setIsOpen(false);
-    if (onOk) onOk(); // เรียกฟังก์ชัน callback (ถ้ามี)
+    onOk();
+  };
+
+  const handleCancel = () => {
+    setIsOpen(false);
+    if (showCancel) {
+      onCancel();
+    }
   };
 
   return (
     <AlertContext.Provider value={{ showAlert }}>
       {children}
-      {/* แปะ Modal ไว้ตรงนี้ทีเดียว ใช้ได้ทั้งแอป */}
       <AlertModal
         isOpen={isOpen}
         title={title}
         message={message}
         type={type}
-        onClose={handleClose}
+        onClose={handleOk}
+        onCancel={showCancel ? handleCancel : undefined}
+        showCancel={showCancel}
+        okText={okText}
+        cancelText={showCancel ? cancelText : undefined}
       />
     </AlertContext.Provider>
   );
 }
 
-// สร้าง Hook เพื่อให้เรียกใช้ง่ายๆ
 export function useAlert() {
   const context = useContext(AlertContext);
   if (!context) {

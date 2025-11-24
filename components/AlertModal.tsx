@@ -7,7 +7,11 @@ interface AlertModalProps {
   title: string;
   message: string;
   onClose: () => void;
+  onCancel?: () => void;
   type?: "success" | "error" | "info"; // เพิ่มประเภทเพื่อเปลี่ยนสีไอคอน
+  showCancel?: boolean;
+  okText?: string;
+  cancelText?: string;
 }
 
 export default function AlertModal({
@@ -15,7 +19,11 @@ export default function AlertModal({
   title,
   message,
   onClose,
+  onCancel = () => {},
   type = "info",
+  showCancel = false,
+  okText = "ตกลง",
+  cancelText = "ยกเลิก",
 }: AlertModalProps) {
   if (!isOpen) return null;
 
@@ -44,12 +52,22 @@ export default function AlertModal({
         <h3 className="text-xl font-bold text-stone-800 mb-2">{title}</h3>
         <p className="text-stone-600 mb-6 text-sm leading-relaxed">{message}</p>
 
-        <button
-          onClick={onClose}
-          className="w-full py-2.5 bg-stone-800 text-white font-bold rounded-xl hover:bg-stone-900 transition-all transform active:scale-95 shadow-md"
-        >
-          ตกลง
-        </button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
+          {showCancel && (
+            <button
+              onClick={onCancel}
+              className="w-full py-2.5 bg-white text-stone-600 font-bold rounded-xl border border-stone-200 hover:bg-stone-50 transition-all transform active:scale-95 shadow-sm"
+            >
+              {cancelText}
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 bg-stone-800 text-white font-bold rounded-xl hover:bg-stone-900 transition-all transform active:scale-95 shadow-md"
+          >
+            {okText}
+          </button>
+        </div>
       </div>
     </div>
   );

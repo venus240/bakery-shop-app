@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useAlert } from "@/components/AlertProvider";
 
 export default function AuthForm({ onClose }: { onClose?: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [loading, setLoading] = useState(false);
+  const { showAlert } = useAlert();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,7 +18,11 @@ export default function AuthForm({ onClose }: { onClose?: () => void }) {
       if (mode === "sign-up") {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        alert("สมัครสำเร็จ — โปรดตรวจสอบอีเมลเพื่อยืนยัน (ถ้ามี)");
+        showAlert(
+          "สมัครสมาชิกสำเร็จ",
+          "โปรดตรวจสอบอีเมลเพื่อยืนยัน (ถ้ามี)",
+          "success"
+        );
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -31,9 +37,9 @@ export default function AuthForm({ onClose }: { onClose?: () => void }) {
     } catch (err) {
       // ✅ จัดการ type error อย่างปลอดภัยโดยไม่ใช้ any
       if (err instanceof Error) {
-        alert(err.message);
+        showAlert("เกิดข้อผิดพลาด", err.message, "error");
       } else {
-        alert(String(err));
+        showAlert("เกิดข้อผิดพลาด", String(err), "error");
       }
     } finally {
       setLoading(false);

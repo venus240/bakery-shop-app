@@ -13,6 +13,7 @@ export const Navbar = () => {
   const { user } = useSupabaseAuth();
   const [showAuth, setShowAuth] = useState(false);
   const [cartCount, setCartCount] = useState<number>(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -51,6 +52,36 @@ export const Navbar = () => {
     return () => {
       mounted = false;
       if (channel) supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  useEffect(() => {
+    let active = true;
+    if (!user) {
+      queueMicrotask(() => setIsAdmin(false));
+      return;
+    }
+
+    const fetchRole = async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (!active) return;
+      if (error) {
+        console.error("fetchRole error:", error);
+        setIsAdmin(false);
+        return;
+      }
+      setIsAdmin(data?.role === "admin");
+    };
+
+    fetchRole();
+
+    return () => {
+      active = false;
     };
   }, [user]);
 
@@ -95,13 +126,6 @@ export const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-6">
-            <Link
-              href="/admin"
-              className="text-sm text-gray-400 hover:text-gray-600 hidden md:block"
-            >
-              Admin
-            </Link>
-
             <Link href="/cart" className="relative group">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -157,10 +181,19 @@ export const Navbar = () => {
 
                   <Link
                     href="/profile"
-                    className="block px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition-colors flex items-center gap-2"
+                    className="px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition-colors flex items-center gap-2"
                   >
                     <span>✏️</span> แก้ไขโปรไฟล์
                   </Link>
+
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      className="px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-800 transition-colors flex items-center gap-2 border-t border-stone-50"
+                    >
+                      <span>🛠️</span> จัดการสินค้า
+                    </Link>
+                  )}
 
                   <button
                     onClick={handleSignOut}

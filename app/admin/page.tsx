@@ -237,6 +237,11 @@ export default function AdminPage() {
         if (image && editingProduct.image_url) {
           await deleteImage(editingProduct.image_url);
         }
+        showAlert(
+          "บันทึกสำเร็จ",
+          `อัปเดตข้อมูลสินค้า ${name} เรียบร้อยแล้ว`,
+          "success"
+        );
       } else {
         const { error } = await supabase.from("products").insert([productData]);
         if (error) throw error;
@@ -251,7 +256,7 @@ export default function AdminPage() {
       await fetchProducts();
     } catch (err) {
       console.error(err);
-      alert("เกิดข้อผิดพลาด");
+      showAlert("เกิดข้อผิดพลาด", "ไม่สามารถบันทึกข้อมูลสินค้าได้", "error");
 
       // If we uploaded a new image but DB update failed, remove uploaded image to avoid orphan
       if (uploadedNewImagePath) {
@@ -269,8 +274,20 @@ export default function AdminPage() {
     }
   };
 
+  const confirmDelete = (product: Product) => {
+    showAlert(
+      "ยืนยันการลบ",
+      `คุณต้องการลบสินค้า "${product.name}" ออกจากระบบหรือไม่?`,
+      {
+        type: "error",
+        okText: "ลบสินค้า",
+        cancelText: "ยกเลิก",
+        onOk: () => handleDelete(product),
+      }
+    );
+  };
+
   const handleDelete = async (product: Product) => {
-    if (!window.confirm(`ยืนยันลบสินค้า "${product.name}"?`)) return;
     setLoading(true);
     try {
       const { error: dbError } = await supabase
@@ -518,7 +535,7 @@ export default function AdminPage() {
                       แก้ไข
                     </button>
                     <button
-                      onClick={() => handleDelete(product)}
+                      onClick={() => confirmDelete(product)}
                       disabled={loading}
                       className="px-4 py-2 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100 font-medium transition-colors disabled:opacity-50"
                     >

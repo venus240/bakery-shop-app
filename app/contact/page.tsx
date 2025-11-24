@@ -1,13 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { useAlert } from "@/components/AlertProvider";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const { showAlert } = useAlert();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`ขอบคุณครับคุณ ${form.name} เราได้รับข้อความแล้ว! (ระบบจำลอง)`);
+    showAlert(
+      "ส่งข้อความเรียบร้อย",
+      `ขอบคุณครับคุณ ${form.name} เราได้รับข้อความแล้ว! (ระบบจำลอง)`,
+      "success"
+    );
     setForm({ name: "", email: "", message: "" });
   };
 

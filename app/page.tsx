@@ -8,9 +8,11 @@ import { useSupabaseAuth } from "@/components/useSupabaseAuth";
 import Link from "next/link";
 import Image from "next/image";
 import type { Product, CustomCakePayload } from "@/types";
+import { useAlert } from "@/components/AlertProvider";
 
 export default function HomePage() {
   const { user } = useSupabaseAuth();
+  const { showAlert } = useAlert();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +45,12 @@ export default function HomePage() {
 
   // ✅ ฟังก์ชันเพิ่มสินค้า Custom (เหมือนหน้า Menu)
   const handleAddCustom = async (payload: CustomCakePayload) => {
-    if (!user) return alert("กรุณาเข้าสู่ระบบ");
+    if (!user)
+      return showAlert(
+        "เข้าสู่ระบบก่อนนะ",
+        "กรุณาเข้าสู่ระบบเพื่อปรับแต่งเค้ก",
+        "info"
+      );
     setIsAdding(true);
     const { error } = await supabase.from("cart_items").insert([
       {
@@ -58,7 +65,11 @@ export default function HomePage() {
     setIsAdding(false);
     if (error) {
       console.error(error);
-      alert("เกิดข้อผิดพลาดในการเพิ่มสินค้า");
+      showAlert(
+        "เพิ่มสินค้าไม่สำเร็จ",
+        "ระบบไม่สามารถเพิ่มเค้กแบบ Custom ลงตะกร้าได้",
+        "error"
+      );
     } else {
       setOpenCustom(false);
       // alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว"); // (Optional)
@@ -89,7 +100,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/menu"
-                className="bg-white text-stone-800 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-stone-100 hover:scale-105 transition-all duration-300 animate-in fade-in zoom-in duration-500 delay-300"
+                className="bg-white text-stone-800 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-stone-100 hover:scale-105 transition-all animate-in fade-in zoom-in duration-500 delay-300"
               >
                 ดูสินค้าทั้งหมด
               </Link>

@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { useAlert } from "@/components/AlertProvider";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -14,6 +15,7 @@ export default function SignupPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { showAlert } = useAlert();
 
   // ฟังก์ชันจัดการการเลือกรูป
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,12 +67,21 @@ export default function SignupPage() {
 
       if (signUpError) throw signUpError;
 
-      alert("สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ");
-      router.push("/login");
-
+      showAlert(
+        "สมัครสมาชิกสำเร็จ!",
+        "กรุณาเข้าสู่ระบบด้วยบัญชีที่เพิ่งสร้าง",
+        {
+          type: "success",
+          onOk: () => router.push("/login"),
+        }
+      );
     } catch (error) {
       console.error(error);
-      alert(error instanceof Error ? error.message : "เกิดข้อผิดพลาด");
+      showAlert(
+        "สมัครสมาชิกไม่สำเร็จ",
+        error instanceof Error ? error.message : "เกิดข้อผิดพลาด",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
