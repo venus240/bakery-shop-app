@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+// ✅ ใช้ Imports จริงตามที่โปรเจกต์คุณกำหนด
 import { supabase } from "@/lib/supabaseClient";
 import { ProductCard } from "@/components/ProductCard";
 import CustomCakeModal from "@/components/CustomCakeModal";
@@ -8,7 +9,7 @@ import { useSupabaseAuth } from "@/components/useSupabaseAuth";
 import type { Product, CustomCakePayload } from "@/types";
 import { useAlert } from "@/components/AlertProvider";
 
-// ✅ 1. กำหนดรายการหมวดหมู่ (id ต้องตรงกับใน Database)
+
 const CATEGORIES = [
   { id: "all", label: "ทั้งหมด" },
   { id: "cake", label: "🍰 เค้ก" },
@@ -71,6 +72,8 @@ export default function MenuPage() {
         "error"
       );
     setIsAdding(true);
+
+    // ✅ คืนค่า Logic การเพิ่มสินค้าลงใน Supabase ตามโค้ดเดิมของคุณ
     const { error } = await supabase.from("cart_items").insert([
       {
         user_id: user.id,
@@ -81,6 +84,7 @@ export default function MenuPage() {
         custom_options: payload.custom_options ?? {},
       },
     ]);
+    
     setIsAdding(false);
     if (error) {
       console.error(error);
@@ -99,11 +103,12 @@ export default function MenuPage() {
     }
   };
 
+  // ✅ ปรับสี Loading Spinner ให้เป็นโทนน้ำตาล
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-stone-600">
+      <div className="min-h-screen flex items-center justify-center text-amber-700 bg-amber-50">
         <div className="flex flex-col items-center gap-2">
-          <div className="w-8 h-8 border-4 border-stone-300 border-t-stone-600 rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-amber-300 border-t-amber-700 rounded-full animate-spin"></div>
           <p>กำลังโหลดเมนู...</p>
         </div>
       </div>
@@ -111,12 +116,15 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-10 min-h-screen">
+    // ✅ เพิ่มพื้นหลังครีมอ่อน
+    <div className="container mx-auto px-4 py-10 min-h-screen bg-amber-50">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-stone-800 mb-2">
+        {/* ✅ ปรับสีหัวข้อให้เป็นน้ำตาลเข้ม */}
+        <h1 className="text-4xl font-bold text-amber-900 mb-2">
           สินค้าทั้งหมด
         </h1>
-        <p className="text-stone-500 text-lg">
+        {/* ✅ ปรับสีคำบรรยายให้เป็นน้ำตาลกลาง */}
+        <p className="text-amber-600 text-lg">
           เลือกความอร่อยที่คุณชื่นชอบได้เลย
         </p>
       </div>
@@ -128,11 +136,13 @@ export default function MenuPage() {
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
             className={`
-              px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap shadow-sm
+              px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap shadow-md
               ${
                 selectedCategory === cat.id
-                  ? "bg-stone-800 text-white scale-105 shadow-md" // สถานะที่เลือกอยู่
-                  : "bg-white text-stone-600 border border-stone-200 hover:bg-stone-100 hover:border-stone-300" // สถานะปกติ
+                  // ✅ สถานะที่เลือกอยู่: พื้นหลังน้ำตาลเข้ม, ตัวอักษรครีม
+                  ? "bg-amber-900 text-amber-50 scale-105 shadow-xl"
+                  // ✅ สถานะปกติ: พื้นหลังครีม/ขาว, ตัวอักษรน้ำตาล, ขอบน้ำตาลอ่อน
+                  : "bg-white text-amber-800 border border-amber-200 hover:bg-amber-100 hover:border-amber-400"
               }
             `}
           >
@@ -150,11 +160,13 @@ export default function MenuPage() {
         </div>
       ) : (
         // ถ้าไม่มีสินค้าในหมวดนี้
-        <div className="text-center py-20">
-          <p className="text-xl text-stone-400">ไม่มีสินค้าในหมวดหมู่นี้</p>
+        <div className="text-center py-20 bg-amber-50 rounded-lg">
+          {/* ✅ ปรับสีข้อความที่ไม่มีสินค้าให้เป็นโทนอ่อน */}
+          <p className="text-xl text-amber-400">ไม่มีสินค้าในหมวดหมู่นี้</p>
           <button
             onClick={() => setSelectedCategory("all")}
-            className="mt-4 text-stone-600 underline hover:text-stone-800"
+            // ✅ ปรับสีปุ่ม 'ดูสินค้าทั้งหมด' ให้เป็นน้ำตาล
+            className="mt-4 text-amber-700 underline hover:text-amber-900"
           >
             ดูสินค้าทั้งหมด
           </button>

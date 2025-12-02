@@ -1,6 +1,5 @@
-"use client";
-
-import Image from "next/image";
+import React from "react";
+// import Image from "next/image"; // เปลี่ยนเป็น img ธรรมดาเพื่อให้แสดงผลใน Preview นี้ได้ทันที
 
 const PROMOTIONS = [
   {
@@ -31,53 +30,55 @@ const PROMOTIONS = [
 
 export default function PromotionPage() {
   return (
-    // ✅ ใช้สีพื้นหลัง bakery-cream
-    <div className="min-h-screen bg-bakery-cream py-12 px-4">
+    // ✅ พื้นหลังสีครีม Warm Cream (#FFF8E7)
+    <div className="min-h-screen bg-[#FFF8E7] py-12 px-4 font-sans selection:bg-[#D7CCC8] selection:text-[#3E2723]">
       <div className="container mx-auto max-w-5xl">
         
         <div className="text-center mb-12">
-          {/* ✅ ใช้สี text-bakery-dark */}
-          <h1 className="text-4xl font-bold text-bakery-dark mb-3 tracking-wide">โปรโมชั่น </h1>
-          {/* ✅ ใช้สี text-bakery-brown */}
-          <p className="text-bakery-brown text-lg">ดีลพิเศษที่เราตั้งใจมอบให้คุณ</p>
+          {/* ✅ หัวข้อสีน้ำตาลเข้ม Mocha (#4E342E) */}
+          <h1 className="text-4xl font-bold text-[#4E342E] mb-3 tracking-wide drop-shadow-sm">โปรโมชั่น</h1>
+          {/* ✅ คำโปรยสีน้ำตาลกลาง (#795548) */}
+          <p className="text-[#795548] text-lg">ดีลพิเศษที่เราตั้งใจมอบให้คุณ</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {PROMOTIONS.map((promo) => (
             <div 
               key={promo.id} 
-              // ✅ เพิ่ม group, transition, group-hover:scale
-              className="group bg-white rounded-2xl shadow-md border border-bakery-beige overflow-hidden 
+              // ✅ การ์ดสีขาว ตัดขอบด้วยสีเบจ (#E6DCC8)
+              className="group bg-white rounded-2xl shadow-sm border border-[#E6DCC8] overflow-hidden 
                          flex flex-col md:flex-row 
                          transition-all duration-300 ease-in-out transform 
-                         hover:scale-[1.02] hover:shadow-lg" // เพิ่ม hover scale และ shadow
+                         hover:scale-[1.02] hover:shadow-[0_8px_30px_rgb(78,52,46,0.15)]"
             >
               {/* รูปภาพ */}
-              <div className="relative w-full md:w-48 h-48 md:h-auto flex-shrink-0 bg-bakery-beige"> {/* ✅ ใช้สี bg-bakery-beige */}
-                <Image 
+              {/* ✅ พื้นหลังรูปสีครีมเข้ม (#F5E6D3) */}
+              <div className="relative w-full md:w-48 h-48 md:h-auto flex-shrink-0 bg-[#F5E6D3] overflow-hidden">
+                <img 
                   src={promo.image} 
                   alt={promo.title} 
-                  fill 
-                  className="object-cover group-hover:scale-110 transition-transform duration-500 ease-in-out" // ✅ เพิ่ม group-hover
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-in-out" 
                 />
               </div>
 
               {/* เนื้อหา */}
               <div className="p-6 flex flex-col justify-center flex-grow">
                 <div className="flex justify-between items-start mb-2">
-                  {/* ✅ ใช้สี text-bakery-dark */}
-                  <h3 className="text-xl font-bold text-bakery-dark">{promo.title}</h3>
+                  {/* ✅ ชื่อโปรสีน้ำตาลเข้ม (#4E342E) */}
+                  <h3 className="text-xl font-bold text-[#4E342E] group-hover:text-[#6D4C41] transition-colors">{promo.title}</h3>
                 </div>
-                {/* ✅ ใช้สี text-bakery-brown */}
-                <p className="text-bakery-brown text-sm mb-4 leading-relaxed">
+                {/* ✅ รายละเอียดสีน้ำตาลอมเทา (#6D4C41) */}
+                <p className="text-[#6D4C41] text-sm mb-4 leading-relaxed">
                   {promo.description}
                 </p>
                 
-                <div className="mt-auto flex items-center justify-between bg-bakery-beige/50 p-3 rounded-xl border-2 border-bakery-beige border-dashed"> {/* ✅ ใช้สีธีม */}
-                  <div className="text-xs text-bakery-brown"> {/* ✅ ใช้สีธีม */}
-                    CODE: <span className="text-bakery-dark font-bold text-base ml-1">{promo.code}</span> {/* ✅ ใช้สีธีม */}
+                {/* ✅ กล่อง Code สีครีมนวล (#FAF3E0) ขอบเส้นประสีน้ำตาลอ่อน (#D7CCC8) */}
+                <div className="mt-auto flex items-center justify-between bg-[#FAF3E0] p-3 rounded-xl border-2 border-[#D7CCC8] border-dashed">
+                  <div className="text-xs text-[#795548] font-semibold">
+                    CODE: <span className="text-[#4E342E] font-bold text-base ml-1 tracking-wider">{promo.code}</span>
                   </div>
-                  <div className="text-[10px] bg-bakery-beige px-2 py-1 rounded text-bakery-dark"> {/* ✅ ใช้สีธีม */}
+                  {/* ✅ ป้ายวันที่สีน้ำตาลอ่อน (#8D6E63) ตัวหนังสือขาว */}
+                  <div className="text-[10px] bg-[#8D6E63] px-2 py-1 rounded text-white font-medium shadow-sm">
                     ถึง {promo.validUntil}
                   </div>
                 </div>
